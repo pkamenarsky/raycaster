@@ -12,7 +12,7 @@ const level = [
   [ 1, 1, 1, 1, 1, 1, 1, 1 ],
   [ 1, 0, 0, 0, 0, 1, 0, 1 ],
   [ 1, 0, 0, 0, 0, 0, 0, 1 ],
-  [ 1, 0, 0, 0, 1, 1, 0, 1 ],
+  [ 1, 0, 0, 1, 1, 1, 0, 1 ],
   [ 1, 0, 0, 0, 0, 0, 0, 1 ],
   [ 1, 0, 1, 0, 0, 1, 0, 1 ],
   [ 1, 0, 0, 0, 0, 0, 0, 1 ],
@@ -123,7 +123,7 @@ function color(r, g, b, att) {
 function drawColumn(ctx, x, [height, texF, dist]) {
   const texX = Math.floor(texF * 64);
   const step = 64 / height;
-  const att = Math.min(1, Math.max(0, 2 / dist));
+  const att = Math.min(1, Math.max(0, 3 / dist));
 
   for (let i = 0, texY = 0; i < height; i++, texY += step) {
     const y = (screenHeight - height) / 2 + i;
