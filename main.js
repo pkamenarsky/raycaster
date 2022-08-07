@@ -1,7 +1,7 @@
 const eps = 0.001;
 const inf = 9999999999;
 
-const screenWidth = 320, screenHeight = 200;
+const screenWidth = 640, screenHeight = 480;
 const levelWidth = 8, levelHeight = 8;
 const cellWidth = 64, cellHeight = 64;
 
@@ -113,14 +113,14 @@ function castRay(x) {
   const proj = distance(0, 0, screenWidth / 2, x - screenWidth / 2);
   const height = proj / dist;
 
-  return [height, tex, dist];
+  return [height, tex, dist, proj, rayAngle];
 }
 
 function color(r, g, b, att) {
   return 'rgb(' + r * att + ', ' + g * att + ', ' + b * att + ')';
 }
 
-function drawColumn(ctx, x, [height, texF, dist]) {
+function drawColumn(ctx, x, [height, texF, dist, proj, rayAngle]) {
   const texX = Math.floor(texF * 64);
   const step = 64 / height;
   const att = Math.min(1, Math.max(0, 3 / dist));
@@ -135,6 +135,26 @@ function drawColumn(ctx, x, [height, texF, dist]) {
     ctx.fillStyle = c;
     ctx.fillRect(x, y, 2, 2);
   }
+
+  for (let y = Math.floor((screenHeight + height) / 2); y < screenHeight; y++) {
+    const floorDist = - proj / (1 - (y - screenHeight / 2) / 0.5);
+
+    const floorAtt = Math.min(1, Math.max(0, 3 / floorDist));
+
+    const floorX = floorDist * Math.cos(rayAngle);
+    const floorY = floorDist * Math.sin(rayAngle);
+
+    const floorTexX = (floorX - Math.floor(floorX)) * 64;
+    const floorTexY = (floorY - Math.floor(floorY)) * 64;
+
+    const checkY = Math.floor(floorTexY / 8);
+    const checkX = (Math.floor(floorTexX / 8) + (checkY % 2 == 0 ? 1 : 0)) % 2;
+
+    const c = checkX == 0 ? color(255, 100, 100, floorAtt) : color(100, 100, 200, att); // should be floorAtt, but att produces a nice reflection effect
+
+    ctx.fillStyle = c;
+    ctx.fillRect(x, y, 2, 2);
+  }
 }
 
 function draw() {
@@ -142,9 +162,9 @@ function draw() {
   let ctx = canvas.getContext('2d');
 
   ctx.fillStyle = 'rgb(0, 0, 0)';
-  ctx.fillRect(0, 0, 320, 200);
+  ctx.fillRect(0, 0, screenWidth, screenHeight);
 
-  for (let x = 0; x < 320; x++) {
+  for (let x = 0; x < screenWidth; x++) {
     drawColumn(ctx, x, castRay(x));
   }
 }
